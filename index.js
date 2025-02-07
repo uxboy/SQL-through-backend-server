@@ -6,17 +6,19 @@ const connection = await mysql.createConnection({
   database: 'delta_app',
   password: '26674870',
 });
+let q = 'SHOW TABLES';
 // A simple SELECT query
 try {
-  const [results, fields] = await connection.query(
-    'SHOW TABLES'
-  );
-
-  console.log(results); // results contains rows returned by server
+  const [results, fields] = await connection.query(q);
+  console.log(results);
+  console.log(results.length); // results contains rows returned by server
+  console.log(results[0]);
+  console.log(results[1]);
   console.log(fields); // fields contains extra meta data about results, if available
 } catch (err) {
   console.log(err);
 }
+connection.end();
 
 
 const createRandomUser = () => {
