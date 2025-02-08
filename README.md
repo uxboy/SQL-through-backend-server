@@ -1,1 +1,1 @@
-# uning SQL in node project
+# Using SQL in node project
