@@ -1,1 +1,1 @@
-# sql with node project
+# sql in node project
