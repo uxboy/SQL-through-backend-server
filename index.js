@@ -6,18 +6,21 @@ const connection = await mysql.createConnection({
   database: 'delta_app',
   password: '26674870',
 });
-let q = 'SHOW TABLES';
-// A simple SELECT query
+// inserting new data
+let q = 'INSERT INTO user (id, username, email, password) VALUES ?';
+
+let users = [
+  ["2", "ananya", "ananya@gmail.com", "abcmbsdfh"],
+  ["3", "rahul", "abcrahul@gmail.com", "ncvjdsu67vc"]
+];
+
 try {
-  const [results, fields] = await connection.query(q);
+  const [results, fields] = await connection.query(q, [users]); // Pass users as a single array inside another array
   console.log(results);
-  console.log(results.length); // results contains rows returned by server
-  console.log(results[0]);
-  console.log(results[1]);
-  console.log(fields); // fields contains extra meta data about results, if available
 } catch (err) {
-  console.log(err);
+  console.error(err);
 }
+
 connection.end();
 
 
