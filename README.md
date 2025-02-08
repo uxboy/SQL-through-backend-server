@@ -1,1 +1,1 @@
-# sql in node project
+# uning SQL in node project
