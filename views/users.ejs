@@ -11,7 +11,8 @@
             <%peoples.forEach((people)=>{%>
                 <div style="background-color: pink;"><%= people.username %></div>
                 <div style="background-color: pink;"><%= people.id %></div>
-                <div  style="margin-bottom: 20px; background-color: pink;"><%= people.email %></div>
+                <div  style="background-color: pink;"><%= people.email %></div>
+                <button style="margin-bottom: 20px;" onclick="window.location.href='http://localhost:8080/user/<%= people.id %>/edit';">edit username</button>
             <% }) %> 
     
             

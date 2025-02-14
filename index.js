@@ -1,4 +1,7 @@
 import express from 'express'; // ✅ Use ES Module syntax
+import methodOverride from 'method-override';
+app.use(methodOverride('_method'))
+
 const app = express();
 const port = 8080;
 import { dirname } from 'path';
@@ -65,6 +68,22 @@ app.get("/user",async (req,res)=>{
   console.error(err);
   res.status(500).send("Internal Server Error");
 }
+})
+app.get("/user/:id/edit",async (req,res)=>{
+    let { id } = req.params;
+    console.log(`User ID received: ${id}`);
+    let q= `SELECT * FROM user WHERE id = '${id}'`
+    try {
+      const [results, fields] = await connection.query(q); 
+      console.log(results);
+      let user = results[0];
+      res.render("edit.ejs" , {user});
+      // res.send(results);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
+
 })
 app.listen(port , ()=>{
   console.log(`app is listening to port ${port}`);
