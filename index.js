@@ -1,12 +1,13 @@
 import express from 'express'; // ✅ Use ES Module syntax
 import methodOverride from 'method-override';
-app.use(methodOverride('_method'))
+
 
 const app = express();
 const port = 8080;
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-
+app.use(methodOverride('_method'));
+app.use(express.urlencoded({extended: true}));
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import path from 'path';
@@ -84,6 +85,9 @@ app.get("/user/:id/edit",async (req,res)=>{
       res.status(500).send("Internal Server Error");
     }
 
+})
+app.patch("/user/:id",(req,res)=>{
+  res.send("updated");
 })
 app.listen(port , ()=>{
   console.log(`app is listening to port ${port}`);
