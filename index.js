@@ -61,7 +61,7 @@ app.get("/user",async (req,res)=>{
   let q = 'SELECT * FROM user;';
   try {
   const [results, fields] = await connection.query(q); 
-  console.log(results);
+  // console.log(results);
   let peoples = results;
   res.render("users.ejs" , {peoples});
   // res.send(results);
@@ -70,14 +70,16 @@ app.get("/user",async (req,res)=>{
   res.status(500).send("Internal Server Error");
 }
 })
+let existingName = [];
 app.get("/user/:id/edit",async (req,res)=>{
     let { id } = req.params;
-    console.log(`User ID received: ${id}`);
+    // console.log(`User ID received: ${id}`);
     let q= `SELECT * FROM user WHERE id = '${id}'`
     try {
       const [results, fields] = await connection.query(q); 
-      console.log(results);
+      // console.log(results);
       let user = results[0];
+      existingName.push(user);
       res.render("edit.ejs" , {user});
       // res.send(results);
     } catch (err) {
@@ -86,8 +88,33 @@ app.get("/user/:id/edit",async (req,res)=>{
     }
 
 })
-app.patch("/user/:id",(req,res)=>{
-  res.send("updated");
+
+app.patch("/user/:id",async(req,res)=>{
+  console.log(req.body); //req.body
+  let { username} = req.body;
+  let newName = { username}.username;
+  console.log(newName); //new name
+  console.log(existingName); //user array
+  console.log(existingName[0].password); //array password
+  console.log(req.body.password);
+  let q = `UPDATE user SET username  = REPLACE(username , '${existingName[0].username}', '${newName}') WHERE id = '${existingName[0].id}';`;
+  if (existingName[0].password == req.body.password) {
+    try {
+      const [results, fields] = await connection.query(q); 
+      // console.log(results);
+      existingName.length = 0;
+  
+      // res.send("updated");
+      res.redirect("/user");
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
+    
+  } else {
+    res.send("wrong password");
+  }
+
 })
 app.listen(port , ()=>{
   console.log(`app is listening to port ${port}`);
