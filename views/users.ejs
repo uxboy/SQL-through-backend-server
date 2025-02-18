@@ -7,13 +7,14 @@
 </head>
 <body>
     <section>
-        <button style="margin-bottom: 20px;">ADD a user</button>
+        <button style="margin-bottom: 20px;" onclick="window.location.href='http://localhost:8080/user/add';">ADD a user</button>
         <div>
             <%peoples.forEach((people)=>{%>
                 <div style="background-color: pink;"><%= people.username %></div>
                 <div style="background-color: pink;"><%= people.id %></div>
                 <div  style="background-color: pink;"><%= people.email %></div>
                 <button style="margin-bottom: 20px;" onclick="window.location.href='http://localhost:8080/user/<%= people.id %>/edit';">edit username</button>
+                <button type="submit" onclick="window.location.href='http://localhost:8080/user/<%= people.id %>/delete';">Delete my account</button>
             <% }) %> 
     
             

@@ -70,6 +70,37 @@ app.get("/user",async (req,res)=>{
   res.status(500).send("Internal Server Error");
 }
 })
+
+
+
+app.get("/user/add",(req,res)=>{
+  res.render("adduser.ejs");
+})
+
+
+app.post("/user",async(req,res)=>{
+  const getusersID = () => {
+    return [
+      faker.string.uuid(),
+    ];
+  }
+  let userId = getusersID();
+  let user = req.body;
+  console.log(user);
+  console.log(userId);
+  let q = `INSERT INTO user (id, password, username, email) VALUES ("${userId[0]}", "${user.password}", "${user.username}", "${user.email}");`;
+  try {
+    const [results, fields] = await connection.query(q); 
+    console.log(results);
+    // res.send("form submmited");
+    res.redirect("/user");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+
 let existingName = [];
 app.get("/user/:id/edit",async (req,res)=>{
     let { id } = req.params;
@@ -88,6 +119,9 @@ app.get("/user/:id/edit",async (req,res)=>{
     }
 
 })
+
+
+
 
 app.patch("/user/:id",async(req,res)=>{
   console.log(req.body); //req.body
@@ -113,6 +147,39 @@ app.patch("/user/:id",async(req,res)=>{
     
   } else {
     res.send("wrong password");
+  }
+
+})
+
+app.get("/user/:id/delete" , (req,res)=>{
+  let {id} = req.params;
+  console.log(id);
+  res.render("deleteuser.ejs", {id});
+})
+app.delete("/user/:id" ,async(req,res)=>{
+  let {id} = req.params;
+  let user = req.body;
+  console.log(user);
+  let q1 = `SELECT * FROM user WHERE id ='${id}';`;
+  try {
+    const [results, fields] = await connection.query(q1); 
+    console.log(results);
+    // if (user) {
+//   try {
+//     let q2 = `DELETE FROM users WHERE id = '${id}';`;
+//     const [results, fields] = await connection.query(q2); 
+//     console.log(results);
+//     res.redirect("/user");
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Internal Server Error");
+//   }
+// } else {
+  
+// }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
   }
 
 })
