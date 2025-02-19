@@ -153,20 +153,21 @@ app.patch("/user/:id",async(req,res)=>{
 
 app.get("/user/:id/delete" , (req,res)=>{
   let {id} = req.params;
-  console.log(id);
   res.render("deleteuser.ejs", {id});
 })
-app.delete("/user/:id" ,async(req,res)=>{
-  let {id} = req.params;
-  let user = req.body;
-  console.log(user);
-  let q1 = `SELECT * FROM user WHERE id ='${id}';`;
-  try {
-    const [results, fields] = await connection.query(q1); 
-    console.log(results);
-    // if (user) {
+// app.delete("/user/:id" ,async(req,res)=>{
+//   let {id} = req.params; // id from link
+//   let formUser = req.body;  // form info print
+//   console.log(id);
+//   console.log(formUser);
+//   let q1 = `SELECT * FROM user WHERE id ='${id}';`;
 //   try {
-//     let q2 = `DELETE FROM users WHERE id = '${id}';`;
+//     const [results, fields] = await connection.query(q1); 
+//     const databaseUser = results[0];
+//     console.log(databaseUser);
+//     if (databaseUser.email == formUser.email && databaseUser.password == formUser.password) {
+//   try {
+//     let q2 = `DELETE FROM user WHERE id = '${id}';`;
 //     const [results, fields] = await connection.query(q2); 
 //     console.log(results);
 //     res.redirect("/user");
@@ -175,14 +176,46 @@ app.delete("/user/:id" ,async(req,res)=>{
 //     res.status(500).send("Internal Server Error");
 //   }
 // } else {
-  
+//       res.send("password is incorrect please try again");
 // }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Internal Server Error");
+//   }
+
+// })
+app.delete("/user/:id", async (req, res) => {
+  let { id } = req.params; // Get user ID from URL
+  let { email, password } = req.body; // Extract email & password from body
+
+  if (!email || !password) {
+    return res.status(400).send("Email and password are required.");
   }
 
-})
+  try {
+    // Use parameterized queries to prevent SQL injection
+    let q1 = `SELECT * FROM user WHERE id = ?`;
+    const [results] = await connection.query(q1, [id]);
+
+    if (results.length === 0) {
+      return res.status(404).send("User not found.");
+    }
+
+    const databaseUser = results[0];
+
+    if (databaseUser.email === email && databaseUser.password === password) {
+      let q2 = `DELETE FROM user WHERE id = ?`;
+      await connection.query(q2, [id]);
+      return res.redirect("/user");
+    } else {
+      return res.status(401).send("Password is incorrect, please try again.");
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
 app.listen(port , ()=>{
   console.log(`app is listening to port ${port}`);
 })
